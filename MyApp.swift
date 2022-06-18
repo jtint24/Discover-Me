@@ -9,11 +9,17 @@ import SwiftUI
 @main
 struct MyApp: App {
     @State var currentName =  NameInfo(name: "", subjectivePronoun: "", objectivePronoun: "", possessivePronoun: "")
+    var nameListModelToUse = NameListModel()
+    init() {
+        nameListModelToUse = UserDefaults.standard.object(forKey: "nameListModel") as! NameListModel
+        currentName = UserDefaults.standard.object(forKey: "NameList") as! NameInfo
+        
+    }
     var body: some Scene {
         WindowGroup {
             //ContentView()
             TabView {
-                NameListView(currentName: $currentName, model: NameListModel()) // the screen for enterring names and seeing the name list
+                NameListView(currentName: $currentName, model: nameListModelToUse) // the screen for enterring names and seeing the name list
                     .tabItem {
                         Label("Name List", systemImage: "list.dash")
                     }
