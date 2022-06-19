@@ -6,7 +6,7 @@ import Foundation
  Holds information relevant to a set of names and pronouns that the user inputs
  */
 
-struct NameInfo: Identifiable {
+struct NameInfo: Identifiable, Codable {
     var name: String                    // The associated name
     var subjectivePronoun: String       // The associated subjective pronoun (like "he")
     var objectivePronoun: String        // The associated objective pronoun (like "her")

@@ -42,6 +42,18 @@ struct NameListView: View {
                                 currentName = model.nameInfoList[i]
                                 model.nameInfoList.remove(at: i)
                                 model.nameInfoList.insert(currentNameHold, at: i)
+                                let encoder = JSONEncoder()
+                                do {
+                                    let nameData = try encoder.encode(currentName)
+                                    UserDefaults.standard.setValue(nameData, forKey: DefaultKeys.currentName)
+
+                                    print("Current name saved successfully!")
+                                    print("name saved: \(try JSONDecoder().decode(NameInfo.self, from: UserDefaults.standard.data(forKey: DefaultKeys.currentName)!).name)")
+                                } catch {
+                                    print("Can't encode current name data!")
+                                }
+                                model.saveModel()
+                                
                             } label: {
                                 Text(nameInfoEntry.name+" ("+nameInfoEntry.getPronounChain()+")")
                             }
@@ -108,13 +120,71 @@ class NameListModel: ObservableObject {
     var sheetMessageText = "Hi there 😄! Please enter some info on how you'd like to be called:" // Message for the attached sheet
     var sheetFirstTime = true                       // Whether it's the first time the sheet is being shown
     
+    init(_ innameInfoList: [NameInfo], _ inshowingSheet: Bool, _ insheetMessageText: String, _ insheetFirstTime: Bool) {
+        nameInfoList = innameInfoList
+        showingSheet = inshowingSheet
+        sheetMessageText = insheetMessageText
+        sheetFirstTime = insheetFirstTime
+    }
+    init(_ nmlStruct: NameListModelStruct) {
+        nameInfoList = nmlStruct.nameInfoList
+        showingSheet = nmlStruct.showingSheet
+        sheetMessageText = nmlStruct.sheetMessageText
+        sheetFirstTime = nmlStruct.sheetFirstTime
+    }
+    init() {}
+    
     func toggleFavoriteOn(idx: Int) -> Void {       // Toggle whether a particular entry in the name list is a favorite
         nameInfoList[idx].toggleFavorite()
+        saveModel()
     }
     func removeNameInfoEntry(idx: Int) -> Void {    // Remove a particular name from the list
         nameInfoList.remove(at: idx)
+        saveModel()
     }
     func addNameInfo(nameInfo: NameInfo) -> Void {  // Add a name to the list
         nameInfoList.append(nameInfo)
+        saveModel()
+    }
+    
+    func toNameListModelStruct() -> NameListModelStruct {
+        return NameListModelStruct(nameInfoList, showingSheet, sheetMessageText, sheetFirstTime)
+    }
+    
+    func saveModel() -> Void {
+        let encoder = JSONEncoder()
+        
+        do {
+            let modelData = try encoder.encode(self.toNameListModelStruct())
+            DispatchQueue.main.async {
+
+                UserDefaults.standard.setValue(modelData, forKey: DefaultKeys.nameListModelStruct)
+            }
+
+            print("Data saved successfully!")
+        } catch {
+            print("Can't encode model data!")
+        }
+        
+    }
+}
+
+struct NameListModelStruct: Codable {
+    var nameInfoList: [NameInfo] = []    // List of enterred names and name infos
+    var showingSheet = true              // Whether the GetPersonalInfoView sheet is being shown
+    var sheetMessageText = "Hi there 😄! Please enter some info on how you'd like to be called:" // Message for the attached sheet
+    var sheetFirstTime = true                       // Whether it's the first time the sheet is being shown
+    
+    init() {}
+    
+    init(_ innameInfoList: [NameInfo], _ inshowingSheet: Bool, _ insheetMessageText: String, _ insheetFirstTime: Bool) {
+        nameInfoList = innameInfoList
+        showingSheet = inshowingSheet
+        sheetMessageText = insheetMessageText
+        sheetFirstTime = insheetFirstTime
+    }
+    
+    func toNameListModel() -> NameListModel {
+        return NameListModel(nameInfoList, showingSheet, sheetMessageText, sheetFirstTime)
     }
 }
