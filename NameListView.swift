@@ -22,6 +22,16 @@ struct NameListView: View {
                         
                         Button { // Favorite button
                             currentName.isFavorite.toggle()
+                            let encoder = JSONEncoder()
+                            do {
+                                let nameData = try encoder.encode(currentName)
+                                UserDefaults.standard.setValue(nameData, forKey: DefaultKeys.currentName)
+
+                                print("Current name saved successfully!")
+                                print("name saved: \(try JSONDecoder().decode(NameInfo.self, from: UserDefaults.standard.data(forKey: DefaultKeys.currentName)!).name)")
+                            } catch {
+                                print("Can't encode current name data!")
+                            }
                         } label: {
                             Image(systemName: currentName.isFavorite ? "star.fill" : "star")
                                 .resizable()
