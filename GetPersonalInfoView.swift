@@ -38,16 +38,28 @@ struct GetPersonalInfoView: View {
             ).frame(minWidth: 100, idealWidth: 200, maxWidth: 300)
                 .multilineTextAlignment(.center)
                 .autocapitalization(.none) // pronouns aren't capitalized so it isn't forced
+                .submitLabel(.continue)
+                .onSubmit {
+                    setSuggestedPronouns(pronoun: userSubjPronoun, enterredIn: 0)
+                }
             TextField("Your objective pronoun? (like him)",
                       text: $userObjPronoun
             ).frame(minWidth: 100, idealWidth: 200, maxWidth: 300)
                 .multilineTextAlignment(.center)
                 .autocapitalization(.none) // pronouns aren't capitalized so it isn't forced
+                .submitLabel(.continue)
+                .onSubmit {
+                    setSuggestedPronouns(pronoun: userObjPronoun, enterredIn: 1)
+                }
             TextField("Your possessive pronoun? (like her)",
                       text: $userPossPronoun
             ).frame(minWidth: 100, idealWidth: 200, maxWidth: 300)
                 .multilineTextAlignment(.center)
                 .autocapitalization(.none) // pronouns aren't capitalized so it isn't forced
+                .submitLabel(.continue)
+                .onSubmit {
+                    setSuggestedPronouns(pronoun: userPossPronoun, enterredIn: 2)
+                }
             Button(nameListModel.sheetFirstTime ? "Continue" : "Add", action: addName)
                 .accessibilityLabel(nameListModel.sheetFirstTime ? "Continue" : "Add")
                 .buttonStyle(.bordered)
@@ -66,15 +78,46 @@ struct GetPersonalInfoView: View {
         ).interactiveDismissDisabled(nameListModel.sheetFirstTime)
     }
     func addName() -> Void {
+        setSuggestedPronouns(pronoun: userSubjPronoun, enterredIn: 0)
+        setSuggestedPronouns(pronoun: userObjPronoun, enterredIn: 1)
+        setSuggestedPronouns(pronoun: userPossPronoun, enterredIn: 2)
+        print(userPossPronoun)
         if (userName.isEmpty || userSubjPronoun.isEmpty || userObjPronoun.isEmpty || userPossPronoun.isEmpty) {
             showEmptyAlert = true
             return
         }
         if nameListModel.nameInfoList.count == 0 && currentName.name.isEmpty { // writes directly to the current name if there is no current name selected
-            currentName = NameInfo(name: userName, subjectivePronoun: userSubjPronoun, objectivePronoun: userObjPronoun, possessivePronoun: userPossPronoun)
+            currentName = NameInfo(name: userName.trimmingCharacters(in: .whitespaces), subjectivePronoun: userSubjPronoun.trimmingCharacters(in: .whitespaces), objectivePronoun: userObjPronoun.trimmingCharacters(in: .whitespaces), possessivePronoun: userPossPronoun.trimmingCharacters(in: .whitespaces))
         } else { // simply appends generated name to list
-            nameListModel.addNameInfo(nameInfo: NameInfo(name: userName, subjectivePronoun: userSubjPronoun, objectivePronoun: userObjPronoun, possessivePronoun: userPossPronoun))
+            nameListModel.addNameInfo(nameInfo: NameInfo(name: userName.trimmingCharacters(in: .whitespaces), subjectivePronoun: userSubjPronoun.trimmingCharacters(in: .whitespaces), objectivePronoun: userObjPronoun.trimmingCharacters(in: .whitespaces), possessivePronoun: userPossPronoun.trimmingCharacters(in: .whitespaces)))
         }
         nameListModel.showingSheet = false  // closes the sheet
+    }
+    func setSuggestedPronouns(pronoun: String, enterredIn: Int) -> Void {
+        let pronounSet = [
+            ["he", "him", "his"],
+            ["she", "her", "her"],
+            ["they", "them", "their"],
+            ["xe", "xem", "xyr"],
+            ["ey", "em", "eir"],
+            ["zie", "zim", "zir"],
+            ["ve", "ver", "vis"]
+        ]
+        print("this runs.")
+        for pronouns in pronounSet {
+            if pronouns[enterredIn] == pronoun {
+                print("match found!")
+                if !userSubjPronoun.isEmpty {
+                    userSubjPronoun = pronouns[0]
+                }
+                if !userObjPronoun.isEmpty {
+                    userObjPronoun = pronouns[1]
+                }
+                if !userPossPronoun.isEmpty {
+                    userPossPronoun = pronouns[2]
+                }
+            }
+        }
+        
     }
 }

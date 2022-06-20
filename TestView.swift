@@ -141,6 +141,16 @@ struct TestView: View {
         }()
         shownSample = textSorter.findNextTextSample(sampleSpace: pluralityGetter(sampleSpace), currentName: currentName)
         generator.impactOccurred()
+        let encoder = JSONEncoder()
+        do {
+            let nameData = try encoder.encode(currentName)
+            UserDefaults.standard.setValue(nameData, forKey: DefaultKeys.currentName)
+
+            print("Current name saved successfully!")
+            print("name saved: \(try JSONDecoder().decode(NameInfo.self, from: UserDefaults.standard.data(forKey: DefaultKeys.currentName)!).name)")
+        } catch {
+            print("Can't encode current name data!")
+        }
     }
     func acceptText() -> Void {
         currentName.positiveSwipes+=1
@@ -156,5 +166,15 @@ struct TestView: View {
         }()
         shownSample = textSorter.findNextTextSample(sampleSpace: pluralityGetter(sampleSpace), currentName: currentName)
         generator.impactOccurred()
+        let encoder = JSONEncoder()
+        do {
+            let nameData = try encoder.encode(currentName)
+            UserDefaults.standard.setValue(nameData, forKey: DefaultKeys.currentName)
+
+            print("Current name saved successfully!")
+            print("name saved: \(try JSONDecoder().decode(NameInfo.self, from: UserDefaults.standard.data(forKey: DefaultKeys.currentName)!).name)")
+        } catch {
+            print("Can't encode current name data!")
+        }
     }
 }
