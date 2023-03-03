@@ -13,6 +13,7 @@ struct TestView: View {
     @State var cardSwipe: Double = 0                                            // The sample card's swipe x position
     @State var selection: String = "Casual"                                     // Selected context
     @State var shownSample: String = "Hi there, ;name, it's nice to meet you!"  // Currently shown sample
+    @Environment(\.colorScheme) var colorScheme
     let generator = UIImpactFeedbackGenerator(style: .medium)                   // Haptic generator for feedback after swipe
     var textSorter: TextSorter = TextSorter()                                   // A sorter struct to optimize what names are shown to them
     let contexts = ["Casual", "Academic", "Professional"]                       // The list of contexts
@@ -38,7 +39,7 @@ struct TestView: View {
                 .frame(minWidth: 100, idealWidth: 700, maxWidth: 800, minHeight: 70, idealHeight: 500, maxHeight: 600, alignment: .center)
                 .background(    // BG is a rounded rectangle to look like a flashcard
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(.white)
+                        .fill(colorScheme == .dark ? Color.black : Color.white)
                         .shadow(radius: 10)
                 ).padding()
                 .rotation3DEffect(.degrees(cardSwipe/3.0), axis: (x: 0, y: 1, z: 0)) // Gives a 3D rotation effect to the sample card as it's swiped
@@ -121,7 +122,7 @@ struct TestView: View {
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .foregroundColor(.white)
+                    .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
             )
             .padding()
             Spacer()

@@ -103,8 +103,8 @@ struct GetPersonalInfoView: View {
             ["zie", "zim", "zir"],
             ["ve", "ver", "vis"]
         ]
-        print("this runs.")
-        for pronouns in pronounSet {
+        // print("this runs.")
+        /*for pronouns in pronounSet {
             if pronouns[enterredIn] == pronoun {
                 print("match found!")
                 if !userSubjPronoun.isEmpty {
@@ -117,7 +117,7 @@ struct GetPersonalInfoView: View {
                     userPossPronoun = pronouns[2]
                 }
             }
-        }
+        }*/
         
     }
 }
